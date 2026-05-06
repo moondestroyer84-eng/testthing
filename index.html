@@ -172,6 +172,12 @@
     </div>
 
     <script>
+        // Automatically move data from the old app name to the new app name if on the same phone
+if (!localStorage.getItem('sys_mem') && localStorage.getItem('nx_members')) {
+    localStorage.setItem('sys_mem', localStorage.getItem('nx_members'));
+    localStorage.setItem('sys_act', localStorage.getItem('nx_active'));
+    localStorage.setItem('sys_thm', localStorage.getItem('nx_theme'));
+}
         let activeDataRaw = JSON.parse(localStorage.getItem('nx_active')) || [];
         let activeDataMigrated = activeDataRaw.map(item => typeof item === 'string' ? { name: item, status: 'Primary Fronter' } : item);
 
@@ -277,7 +283,41 @@
         function changeTheme(t) { state.theme = t; applyTheme(t); save(); }
         function applyTheme(t) { document.body.setAttribute('data-theme', t); document.getElementById('theme-selector').value = t; }
         function generateKey() { document.getElementById('system-key-box').value = btoa(unescape(encodeURIComponent(JSON.stringify(state)))); }
-        function importData() { try { const data = JSON.parse(decodeURIComponent(escape(atob(prompt("Paste Key:"))))); if(confirm("Overwrite data?")) { state = data; save(); location.reload(); } } catch { alert("Invalid Key"); } }
+        function importData() {
+    let rawInput = prompt("Paste your Backup Code or System Key here:");
+    if (!rawInput) return;
+
+    let parsedData = null;
+
+    // STEP 1: Try to read it as the "lot of code" (Raw JSON)
+    try {
+        parsedData = JSON.parse(rawInput);
+    } catch (e) {
+        // STEP 2: Try to read it as the "Complex" Base64 from the index.html.html version
+        try {
+            parsedData = JSON.parse(decodeURIComponent(escape(atob(rawInput))));
+        } catch (e2) {
+            // STEP 3: Try to read it as the "Simple" Short Key
+            try {
+                parsedData = JSON.parse(atob(rawInput));
+            } catch (e3) {
+                alert("Could not read this code. Make sure you copied the entire thing!");
+                return;
+            }
+        }
+    }
+
+    if (parsedData && confirm("Data found! Do you want to overwrite your current account with this backup?")) {
+        // This part 'translates' the old names to the new names automatically
+        state.members = parsedData.members || parsedData.nx_members || [];
+        state.activeFronters = parsedData.activeFronters || parsedData.nx_active || parsedData.active || [];
+        state.history = parsedData.history || parsedData.nx_history || [];
+        state.theme = parsedData.theme || parsedData.nx_theme || parsedData.sys_thm || 'dark';
+        
+        save();
+        location.reload(); // Refresh to show the new data
+    }
+}
     </script>
 </body>
 </html>
