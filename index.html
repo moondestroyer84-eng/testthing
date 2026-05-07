@@ -190,146 +190,71 @@
         .btn-danger { background: rgba(255, 82, 82, 0.1); color: #ff5252; }
         .btn-danger:hover { background: #ff5252; color: white; }
 
-        .chat-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .chat-speaker {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid #2a2a32;
-            cursor: pointer;
-            transition: background 0.2s, border-color 0.2s;
-        }
-
-        .chat-speaker.active {
-            background: rgba(124, 77, 255, 0.18);
-            border-color: #7c4dff;
-        }
-
-        .chat-speaker img,
-        .chat-speaker .chat-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #252525;
-        }
-
-        .chat-window {
-            background: #121217;
-            border: 1px solid #2a2a32;
-            border-radius: 20px;
-            padding: 20px;
-            min-height: 340px;
+        .chat-panel {
             display: flex;
             flex-direction: column;
+            gap: 18px;
+            min-height: 720px;
+        }
+
+        .chat-panel .chat-intro {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
             gap: 12px;
         }
 
-        .chat-bubble {
-            max-width: 100%;
-            background: rgba(124, 77, 255, 0.12);
-            border: 1px solid rgba(124, 77, 255, 0.22);
-            border-radius: 18px;
-            padding: 14px 16px;
-            color: #e1e1e6;
-            display: inline-block;
-            line-height: 1.5;
-        }
-
-        .chat-bubble .meta {
+        .chat-panel .chat-select {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-            font-size: 0.82rem;
-            color: #a1a1aa;
-        }
-
-        .chat-view {
-            display: block;
+            flex-direction: column;
+            gap: 8px;
             width: 100%;
-            min-height: 600px;
+            max-width: 560px;
         }
 
-        .chat-header {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #2a2a32;
-            margin-bottom: 16px;
+        .chat-panel .chat-select select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid #2a2a32;
+            background: #0b0b0e;
+            color: #e1e1e6;
+            font-size: 1rem;
         }
 
-        .chat-current-panel {
+        .chat-panel .chat-current {
             display: flex;
             align-items: center;
             gap: 14px;
+            padding: 14px 18px;
+            border-radius: 18px;
+            border: 1px solid #2a2a32;
+            background: rgba(255,255,255,0.04);
         }
 
-        .chat-current-panel img,
-        .chat-current-panel .chat-avatar {
-            width: 48px;
-            height: 48px;
+        .chat-panel .chat-current img,
+        .chat-panel .chat-current .chat-avatar {
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             object-fit: cover;
             background: #252525;
         }
 
-        .chat-current-panel .current-meta {
+        .chat-panel .chat-current .current-meta {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
 
-        .chat-current-panel .current-meta strong {
-            font-size: 1rem;
+        .chat-panel .chat-current .current-meta strong {
+            font-size: 1.05rem;
         }
 
-        .chat-current-panel .current-meta span {
+        .chat-panel .chat-current .current-meta span {
             color: var(--text-dim);
-            font-size: 0.85rem;
-        }
-
-        .speaker-picker {
-            display: none;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding: 12px 0;
-        }
-
-        .speaker-picker.open {
-            display: flex;
-        }
-
-        .speaker-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            border-radius: 999px;
-            border: 1px solid #2a2a32;
-            background: rgba(255,255,255,0.04);
-            color: #e1e1e6;
-            cursor: pointer;
-            transition: background 0.2s, border-color 0.2s;
-        }
-
-        .speaker-pill.active,
-        .speaker-pill:hover {
-            background: rgba(124, 77, 255, 0.18);
-            border-color: #7c4dff;
+            font-size: 0.9rem;
         }
 
         .chat-window {
@@ -344,26 +269,14 @@
             overflow-y: auto;
         }
 
-        .chat-window {
-            background: #0f1014;
-            border: 1px solid #2a2a32;
-            border-radius: 20px;
-            padding: 20px;
-            min-height: 320px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            overflow-y: auto;
-        }
-
         .chat-bubble {
-            max-width: 85%;
+            max-width: 90%;
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 18px;
-            padding: 14px 16px;
+            padding: 16px 18px;
             color: #e1e1e6;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .chat-bubble .meta {
@@ -385,19 +298,25 @@
 
         .chat-input-area textarea {
             width: 100%;
-            min-height: 100px;
+            min-height: 110px;
             resize: vertical;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid #2a2a32;
+            background: #0b0b0e;
+            color: #e1e1e6;
         }
 
         .chat-input-area button {
             min-width: 140px;
             align-self: end;
+            padding: 0 22px;
         }
 
         .chat-info {
             font-size: 0.9rem;
             color: #a1a1aa;
-            margin-bottom: 12px;
+            margin-bottom: 0;
         }
 
         /* FORMS */
@@ -453,8 +372,7 @@
             input, select, textarea { padding: 14px; font-size: 1rem; }
             h1 { font-size: 1.5rem; }
             h2 { font-size: 1rem; }
-            .chat-view { grid-template-columns: 1fr; min-height: auto; }
-            .chat-sidebar { min-height: auto; }
+            .chat-panel { min-height: auto; }
             .chat-window { min-height: 240px; }
         }
     </style>
@@ -527,26 +445,33 @@
         </div>
 
         <div id="chat" class="view">
-            <div class="chat-view">
-                <div class="chat-view">
-                    <div class="chat-header">
-                        <div class="chat-current-panel">
-                            <div id="chat-current-avatar" class="chat-avatar"></div>
-                            <div class="current-meta">
-                                <strong id="chat-current-name">No speaker selected</strong>
-                                <span id="chat-current-role">Choose an alter to start chatting.</span>
-                            </div>
+            <div class="card chat-panel">
+                <div class="chat-intro">
+                    <div>
+                        <h1>Alter Chat</h1>
+                        <p class="chat-info">Choose an alter from the dropdown and send messages as them.</p>
+                    </div>
+                    <div id="chat-current-speaker" class="chat-current">
+                        <div id="chat-current-avatar" class="chat-avatar"></div>
+                        <div class="current-meta">
+                            <strong id="chat-current-name">No speaker selected</strong>
+                            <span id="chat-current-role">Choose an alter to start chatting.</span>
                         </div>
-                        <button class="btn btn-outline" type="button" id="chat-speaker-toggle" onclick="toggleSpeakerPicker()">Choose Speaker</button>
                     </div>
+                </div>
 
-                    <div class="speaker-picker" id="chat-speaker-list"></div>
-                    <div class="chat-window" id="chat-window"></div>
+                <div class="chat-select">
+                    <label for="chat-speaker-select">Current Speaker</label>
+                    <select id="chat-speaker-select" onchange="updateCurrentSpeaker(this.value)">
+                        <option value="">Select an alter...</option>
+                    </select>
+                </div>
 
-                    <div class="chat-input-area">
-                        <textarea id="chat-message-input" placeholder="Write a message..."></textarea>
-                        <button class="btn btn-primary" id="chat-send-button" onclick="sendChatMessage()">Send</button>
-                    </div>
+                <div class="chat-window" id="chat-window"></div>
+
+                <div class="chat-input-area">
+                    <textarea id="chat-message-input" placeholder="Write a message..."></textarea>
+                    <button class="btn btn-primary" id="chat-send-button" onclick="sendChatMessage()">Send</button>
                 </div>
             </div>
         </div>
@@ -819,42 +744,28 @@
             renderChatView();
         }
 
-        function selectChatSpeaker(index) {
-            const member = state.members[index];
-            if (!member) return;
-            state.currentSpeaker = member.name;
+        function updateCurrentSpeaker(name) {
+            state.currentSpeaker = name || null;
             save();
             renderChatView();
         }
 
-        function toggleSpeakerPicker() {
-            const speakerList = document.getElementById('chat-speaker-list');
-            speakerList.classList.toggle('open');
-        }
-
         function renderChatView() {
-            const speakerList = document.getElementById('chat-speaker-list');
+            const speakerSelect = document.getElementById('chat-speaker-select');
             const chatWindow = document.getElementById('chat-window');
             const currentName = document.getElementById('chat-current-name');
             const currentRole = document.getElementById('chat-current-role');
             const currentAvatar = document.getElementById('chat-current-avatar');
             const messageInput = document.getElementById('chat-message-input');
             const sendButton = document.getElementById('chat-send-button');
-            const toggleButton = document.getElementById('chat-speaker-toggle');
 
-            speakerList.innerHTML = '';
-            chatWindow.innerHTML = '';
-
-            state.members.forEach((member, index) => {
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'speaker-pill' + (state.currentSpeaker === member.name ? ' active' : '');
-                button.onclick = () => selectChatSpeaker(index);
-                button.innerHTML = `
-                    ${member.pfp ? `<img src="${member.pfp}" alt="${member.name}">` : `<div class="chat-avatar" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; font-size:0.9rem;">${member.name[0]}</div>`}
-                    <span>${member.name}</span>
-                `;
-                speakerList.appendChild(button);
+            speakerSelect.innerHTML = `<option value="">Select an alter...</option>`;
+            state.members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.name;
+                option.textContent = member.name;
+                if (state.currentSpeaker === member.name) option.selected = true;
+                speakerSelect.appendChild(option);
             });
 
             const selected = state.members.find(mem => mem.name === state.currentSpeaker);
@@ -864,16 +775,15 @@
                 currentAvatar.innerHTML = selected.pfp ? `<img src="${selected.pfp}" alt="${selected.name}">` : `<div class="chat-avatar" style="display:flex; align-items:center; justify-content:center;">${selected.name[0]}</div>`;
                 messageInput.disabled = isViewerMode ? true : false;
                 sendButton.disabled = isViewerMode ? true : false;
-                toggleButton.textContent = state.currentSpeaker ? `Speaker: ${selected.name}` : 'Choose Speaker';
             } else {
                 currentName.textContent = 'No speaker selected';
                 currentRole.textContent = 'Choose an alter to start chatting.';
                 currentAvatar.innerHTML = `<div class="chat-avatar" style="display:flex; align-items:center; justify-content:center;">?</div>`;
                 messageInput.disabled = true;
                 sendButton.disabled = true;
-                toggleButton.textContent = 'Choose Speaker';
             }
 
+            chatWindow.innerHTML = '';
             state.chatMessages.forEach(message => {
                 const bubble = document.createElement('div');
                 bubble.className = 'chat-bubble';
