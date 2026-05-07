@@ -453,7 +453,8 @@
             input, select, textarea { padding: 14px; font-size: 1rem; }
             h1 { font-size: 1.5rem; }
             h2 { font-size: 1rem; }
-            .chat-view { min-height: auto; }
+            .chat-view { grid-template-columns: 1fr; min-height: auto; }
+            .chat-sidebar { min-height: auto; }
             .chat-window { min-height: 240px; }
         }
     </style>
@@ -863,7 +864,7 @@
                 currentAvatar.innerHTML = selected.pfp ? `<img src="${selected.pfp}" alt="${selected.name}">` : `<div class="chat-avatar" style="display:flex; align-items:center; justify-content:center;">${selected.name[0]}</div>`;
                 messageInput.disabled = isViewerMode ? true : false;
                 sendButton.disabled = isViewerMode ? true : false;
-                toggleButton.textContent = `Speaker: ${selected.name}`;
+                toggleButton.textContent = state.currentSpeaker ? `Speaker: ${selected.name}` : 'Choose Speaker';
             } else {
                 currentName.textContent = 'No speaker selected';
                 currentRole.textContent = 'Choose an alter to start chatting.';
