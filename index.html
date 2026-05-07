@@ -2,378 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <meta name="theme-color" content="#7c4dff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SystemHub">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%237c4dff'/><text x='50' y='55' text-anchor='middle' fill='white' font-size='40'>S</text></svg>">
     <link rel="manifest" href="manifest.json">
+    
     <title>My System Hub</title>
     <style>
         /* CSS VARIABLES & THEMING */
         :root {
-            --bg: #0b0b0e;
-            --card: #15151a;
-            --card-hover: #1c1c24;
-            --border: #2a2a32;
-            --text-main: #e1e1e6;
-            --text-dim: #a1a1aa;
-            --accent: #7c4dff;
-            --accent-glow: rgba(124, 77, 255, 0.3);
-            --danger: #ff5252;
-            --success: #69f0ae;
-            --blur: blur(10px);
+            --bg: #0b0b0e; --card: #15151a; --border: #2a2a32; --text-main: #e1e1e6;
+            --text-dim: #a1a1aa; --accent: #7c4dff; --danger: #ff5252; --success: #69f0ae;
         }
 
-        /* LIGHT THEME OVERRIDES */
-        [data-theme="light"] {
-            --bg: #f0f2f5;
-            --card: #ffffff;
-            --card-hover: #f8f9fa;
-            --border: #dcdde1;
-            --text-main: #2f3640;
-            --text-dim: #7f8c8d;
-            --accent: #4834d4;
-            --accent-glow: rgba(72, 52, 212, 0.1);
-        }
+        [data-theme="light"] { --bg: #f0f2f5; --card: #ffffff; --border: #dcdde1; --text-main: #2f3640; --text-dim: #7f8c8d; --accent: #4834d4; }
+        [data-theme="soft"] { --bg: #2d3436; --card: #353b48; --border: #4b515d; --accent: #fab1a0; --text-main: #dfe6e9; }
 
-        /* SOFT THEME OVERRIDES */
-        [data-theme="soft"] {
-            --bg: #2d3436;
-            --card: #353b48;
-            --border: #4b515d;
-            --accent: #fab1a0;
-            --text-main: #dfe6e9;
-        }
+        * { box-sizing: border-box; transition: background 0.3s, border 0.3s; -webkit-tap-highlight-color: transparent; }
 
-        * { box-sizing: border-box; transition: background 0.3s, border 0.3s; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; padding-bottom: 80px; line-height: 1.6; }
 
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0b0b0e;
-            color: #e1e1e6;
-            margin: 0;
-            padding-bottom: 80px; /* Space for bottom nav on mobile */
-            line-height: 1.6;
-        }
-
-
-        .navbar {
-            background-color: #15151a;
-            border-bottom: 1px solid #2a2a32;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            height: 60px;
-        }
-
-        .nav-brand { font-weight: 800; font-size: 1.1rem; color: #7c4dff; letter-spacing: 1px; }
-
+        .navbar { background-color: var(--card); border-bottom: 1px solid var(--border); padding: env(safe-area-inset-top) 20px 0 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; height: 60px; }
+        .nav-brand { font-weight: 800; font-size: 1.1rem; color: var(--accent); letter-spacing: 1px; }
         .nav-links { display: flex; gap: 5px; height: 100%; }
+        .nav-btn { background: transparent; border: none; color: var(--text-dim); padding: 0 15px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; height: 100%; border-bottom: 3px solid transparent; }
+        .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(124, 77, 255, 0.1); }
 
-        .nav-btn {
-            background: transparent;
-            border: none;
-            color: #a1a1aa;
-            padding: 0 15px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            border-bottom: 3px solid transparent;
-        }
-
-        .nav-btn.active { color: #7c4dff; border-bottom-color: #7c4dff; background: rgba(124, 77, 255, 0.3); }
-
-        /* CONTAINER & LAYOUT */
         .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
         .view { display: none; animation: fadeIn 0.4s ease; }
         .view.active { display: block; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* FRONTING PANEL */
-        .front-hero {
-            background: linear-gradient(135deg, #15151a 0%, #101014 100%);
-            border: 1px solid #2a2a32;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .fronters-container { display: flex; flex-wrap: wrap; gap: 20px; }
+        .front-hero { background: linear-gradient(135deg, var(--card) 0%, #101014 100%); border: 1px solid var(--border); border-radius: 20px; padding: 30px; margin-bottom: 30px; }
+        .fronters-container { display: flex; flex-direction: column; gap: 10px; }
         
-        .fronter-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid #7c4dff;
-            object-fit: cover;
-            padding: 3px;
-            background: #0b0b0e;
-        }
-
-        .fronter-info h1 { margin: 0; font-size: 1.8rem; }
-        .fronter-badge {
-            display: inline-block;
-            background: rgba(124, 77, 255, 0.3);
-            color: #7c4dff;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        /* CARDS */
-        .card {
-            background: #15151a;
-            border: 1px solid #2a2a32;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-
-        .member-card {
-            background: #15151a;
-            border: 1px solid #2a2a32;
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .member-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-
-        .member-banner { height: 80px; background: #7c4dff; opacity: 0.2; }
-
+        .member-card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; overflow: hidden; }
+        .member-banner { height: 80px; background: var(--accent); opacity: 0.2; }
         .member-content { padding: 15px; position: relative; margin-top: -40px; }
+        .member-pfp { width: 70px; height: 70px; border-radius: 12px; border: 4px solid var(--card); object-fit: cover; background: #252525; }
 
-        .member-pfp {
-            width: 70px;
-            height: 70px;
-            border-radius: 12px;
-            border: 4px solid #15151a;
-            object-fit: cover;
-            background: #252525;
-        }
+        .btn { border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-danger { background: rgba(255, 82, 82, 0.1); color: var(--danger); }
 
-        .member-meta { margin-top: 10px; }
-        .member-name { font-size: 1.1rem; font-weight: 700; margin: 5px 0; }
-        .member-sub { font-size: 0.8rem; color: #a1a1aa; font-weight: 500; }
-
-        /* BUTTONS */
-        .btn {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-
-        .btn-primary { background: #7c4dff; color: white; }
-        .btn-primary:hover { filter: brightness(1.2); }
-        .btn-outline { background: transparent; border: 1px solid #2a2a32; color: #e1e1e6; }
-        .btn-outline:hover { background: #2a2a32; }
-        .btn-danger { background: rgba(255, 82, 82, 0.1); color: #ff5252; }
-        .btn-danger:hover { background: #ff5252; color: white; }
-
-        .chat-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            min-height: 720px;
-        }
-
-        .chat-panel .chat-intro {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .chat-panel .chat-select {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-            max-width: 560px;
-        }
-
-        .chat-panel .chat-select select {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 14px;
-            border: 1px solid #2a2a32;
-            background: #0b0b0e;
-            color: #e1e1e6;
-            font-size: 1rem;
-        }
-
-        .chat-panel .chat-current {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 18px;
-            border-radius: 18px;
-            border: 1px solid #2a2a32;
-            background: rgba(255,255,255,0.04);
-        }
-
-        .chat-panel .chat-current img,
-        .chat-panel .chat-current .chat-avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #252525;
-        }
-
-        .chat-panel .chat-current .current-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .chat-panel .chat-current .current-meta strong {
-            font-size: 1.05rem;
-        }
-
-        .chat-panel .chat-current .current-meta span {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-        }
-
-        .chat-window {
-            background: #0f1014;
-            border: 1px solid #2a2a32;
-            border-radius: 20px;
-            padding: 20px;
-            min-height: 420px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            overflow-y: auto;
-        }
-
-        .chat-bubble {
-            max-width: 90%;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 18px;
-            padding: 16px 18px;
-            color: #e1e1e6;
-            line-height: 1.6;
-        }
-
-        .chat-bubble .meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 10px;
-            font-size: 0.82rem;
-            color: #a1a1aa;
-        }
-
-        .chat-input-area {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 10px;
-            align-items: stretch;
-        }
-
-        .chat-input-area textarea {
-            width: 100%;
-            min-height: 110px;
-            resize: vertical;
-            padding: 14px 16px;
-            border-radius: 16px;
-            border: 1px solid #2a2a32;
-            background: #0b0b0e;
-            color: #e1e1e6;
-        }
-
-        .chat-input-area button {
-            min-width: 140px;
-            align-self: end;
-            padding: 0 22px;
-        }
-
-        .chat-info {
-            font-size: 0.9rem;
-            color: #a1a1aa;
-            margin-bottom: 0;
-        }
-
-        /* FORMS */
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 0.8rem; font-weight: 700; color: #a1a1aa; margin-bottom: 8px; text-transform: uppercase; }
-        
-        input, select, textarea {
-            width: 100%;
-            background: #0b0b0e;
-            border: 1px solid #2a2a32;
-            color: #e1e1e6;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
+        label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
+        input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text-main); padding: 12px; border-radius: 8px; font-size: 1rem; }
 
-        input:focus { outline: none; border-color: #7c4dff; }
-
-        /* LOG TABLE */
         .log-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        .log-table th { text-align: left; padding: 12px; color: #a1a1aa; border-bottom: 1px solid #2a2a32; }
-        .log-table td { padding: 12px; border-bottom: 1px solid #2a2a32; }
+        .log-table th, .log-table td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
 
-        /* MODAL */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            display: none; justify-content: center; align-items: center; z-index: 2000;
-        }
-        .modal-content { background: #15151a; width: 90%; max-width: 500px; padding: 30px; border-radius: 20px; border: 1px solid #2a2a32; }
-
-        /* UTILS */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: var(--card); width: 90%; max-width: 500px; padding: 30px; border-radius: 20px; border: 1px solid var(--border); }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; background: #2a2a32; }
+        .badge { font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; background: var(--border); }
 
-        /* MOBILE RESPONSIVENESS */
         @media (max-width: 768px) {
-            .container { padding: 0 15px; }
-            .navbar { padding: 0 10px; height: 50px; }
-            .nav-brand { font-size: 1rem; }
-            .nav-links { gap: 0; }
-            .nav-btn { padding: 0 10px; font-size: 0.75rem; }
-            .btn { padding: 12px 20px; font-size: 0.95rem; min-height: 44px; }
-            .card { padding: 15px; margin-bottom: 15px; }
-            .front-hero { padding: 20px; }
-            .fronter-avatar { width: 80px; height: 80px; }
-            .member-card { margin-bottom: 15px; }
-            .member-pfp { width: 60px; height: 60px; }
-            .grid { grid-template-columns: 1fr; gap: 15px; }
-            .log-table th, .log-table td { padding: 10px; font-size: 0.8rem; }
-            .modal-content { width: 95%; padding: 20px; }
-            .form-group { margin-bottom: 15px; }
-            input, select, textarea { padding: 14px; font-size: 1rem; }
-            h1 { font-size: 1.5rem; }
-            h2 { font-size: 1rem; }
-            .chat-panel { min-height: auto; }
-            .chat-window { min-height: 240px; }
+            .container { padding: 0 15px; } .navbar { padding: 0 10px; height: 50px; } .nav-brand { font-size: 1rem; } .nav-btn { padding: 0 10px; font-size: 0.75rem; } .grid { grid-template-columns: 1fr; gap: 15px; }
         }
     </style>
 </head>
@@ -382,22 +75,18 @@
     <nav class="navbar">
         <div class="nav-brand">My System</div>
         <div class="nav-links">
-            <button class="nav-btn active" onclick="switchTab('dash', event)">Dashboard</button>
+            <button class="nav-btn active" onclick="switchTab('dash', event)">Dash</button>
             <button class="nav-btn" onclick="switchTab('members', event)">Directory</button>
             <button class="nav-btn" onclick="switchTab('history', event)">Log</button>
-            <button class="nav-btn" onclick="switchTab('chat', event)">Chat</button>
             <button class="nav-btn" onclick="switchTab('settings', event)">Settings</button>
         </div>
-        <button class="btn btn-outline" style="padding: 5px 10px;" onclick="togglePrivacy()">🔒</button>
     </nav>
 
     <div class="container" id="main-container">
-
         <div id="dash" class="view active">
             <div class="front-hero">
-                <span class="fronter-badge">Currently Fronting</span>
-                <div id="active-fronters-list" class="fronters-container">
-                    </div>
+                <span style="color: var(--accent); font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">Current Front</span>
+                <div id="active-fronters-list" class="fronters-container" style="margin-top: 15px;"></div>
             </div>
 
             <div class="flex-between" style="margin-bottom: 15px;">
@@ -409,70 +98,19 @@
 
         <div id="members" class="view">
             <div class="flex-between" style="margin-bottom: 25px;">
-                <h1>System Directory</h1>
-                <button class="btn btn-primary" onclick="openMemberModal()">+ Add Member</button>
+                <h1>Directory</h1>
+                <button class="btn btn-primary" onclick="openMemberModal()">+ Add</button>
             </div>
-
-            <div class="card" style="padding: 10px; margin-bottom: 25px; display: flex; gap: 10px;">
-                <input type="text" id="search-bar" placeholder="Search members by name or role..." oninput="renderMembers()">
-                <select id="filter-group" style="width: 150px;" onchange="renderMembers()">
-                    <option value="All">All Groups</option>
-                    <option value="Internal">Internal</option>
-                    <option value="Fronting">Fronting Team</option>
-                    <option value="Littles">Littles</option>
-                </select>
-            </div>
-
             <div id="directory-grid" class="grid"></div>
         </div>
 
         <div id="history" class="view">
-            <h1>Switching History</h1>
+            <h1>Log</h1>
             <div class="card">
                 <table class="log-table">
-                    <thead>
-                        <tr>
-                            <th>Member</th>
-                            <th>Action</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="history-log-body">
-                        </tbody>
+                    <tbody id="history-log-body"></tbody>
                 </table>
                 <button class="btn btn-danger" style="margin-top: 20px; width: 100%;" onclick="clearLogs()">Clear History</button>
-            </div>
-        </div>
-
-        <div id="chat" class="view">
-            <div class="card chat-panel">
-                <div class="chat-intro">
-                    <div>
-                        <h1>Alter Chat</h1>
-                        <p class="chat-info">Choose an alter from the dropdown and send messages as them.</p>
-                    </div>
-                    <div id="chat-current-speaker" class="chat-current">
-                        <div id="chat-current-avatar" class="chat-avatar"></div>
-                        <div class="current-meta">
-                            <strong id="chat-current-name">No speaker selected</strong>
-                            <span id="chat-current-role">Choose an alter to start chatting.</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="chat-select">
-                    <label for="chat-speaker-select">Current Speaker</label>
-                    <select id="chat-speaker-select" onchange="updateCurrentSpeaker(this.value)">
-                        <option value="">Select an alter...</option>
-                    </select>
-                </div>
-
-                <div class="chat-window" id="chat-window"></div>
-
-                <div class="chat-input-area">
-                    <textarea id="chat-message-input" placeholder="Write a message..."></textarea>
-                    <button class="btn btn-primary" id="chat-send-button" onclick="sendChatMessage()">Send</button>
-                </div>
             </div>
         </div>
 
@@ -481,492 +119,165 @@
             <div class="card">
                 <label>UI Theme</label>
                 <select id="theme-selector" onchange="changeTheme(this.value)">
-                    <option value="dark">Midnight (Default)</option>
+                    <option value="dark">Midnight</option>
                     <option value="light">Daylight</option>
                     <option value="soft">Soft Forest</option>
                 </select>
             </div>
-
             <div class="card">
-                <label>Data Management</label>
-                <p style="font-size: 0.8rem; color: #a1a1aa;">Copy your System Key to share or backup your data.</p>
-                <textarea id="system-key-box" readonly rows="4" style="font-family: monospace; font-size: 0.7rem; background: #000; color: #69f0ae;"></textarea>
+                <label>Backup Data</label>
+                <textarea id="system-key-box" readonly rows="3" style="font-family: monospace; font-size: 0.7rem;"></textarea>
                 <div class="flex-between" style="margin-top: 10px; gap: 10px;">
-                    <button class="btn btn-outline" style="flex:1" onclick="generateKey()">Generate Key</button>
-                    <button class="btn btn-outline" style="flex:1" onclick="importData()">Import Data</button>
+                    <button class="btn btn-outline" style="flex:1" onclick="generateKey()">Generate</button>
+                    <button class="btn btn-outline" style="flex:1" onclick="importData()">Import</button>
                 </div>
-            </div>
-
-            <div class="card">
-                <label>Sharing</label>
-                <p style="font-size: 0.8rem; color: #a1a1aa;">Share this link for friends to view (read-only):</p>
-                <input id="viewer-link" readonly value="" style="width: 100%; background: #0b0b0e; border: 1px solid #2a2a32; color: #e1e1e6; padding: 12px; border-radius: 8px;">
             </div>
         </div>
     </div>
 
     <div id="member-modal" class="modal-overlay">
         <div class="modal-content">
-            <h2 id="modal-title">New System Member</h2>
+            <h2 id="modal-title">New Member</h2>
             <form id="member-form">
                 <input type="hidden" id="edit-index" value="-1">
-                
-                <div class="form-group">
-                    <label>Profile Image</label>
-                    <input type="file" id="m-pfp" accept="image/*">
-                </div>
-
-                <div class="flex-between" style="gap: 15px;">
-                    <div class="form-group" style="flex: 2;">
-                        <label>Name</label>
-                        <input type="text" id="m-name" required placeholder="Name">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Age</label>
-                        <input type="number" id="m-age" placeholder="0">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Pronouns</label>
-                    <input type="text" id="m-pronouns" placeholder="they/them">
-                </div>
-
-                <div class="form-group">
-                    <label>System Role</label>
-                    <input type="text" id="m-role" placeholder="Protector, Caregiver, etc.">
-                </div>
-
-                <div class="form-group">
-                    <label>Group / Folder</label>
-                    <select id="m-group">
-                        <option value="Internal">Internal</option>
-                        <option value="Fronting">Fronting Team</option>
-                        <option value="Littles">Littles</option>
-                    </select>
-                </div>
-
+                <div class="form-group"><label>Image</label><input type="file" id="m-pfp" accept="image/*"></div>
+                <div class="form-group"><label>Name</label><input type="text" id="m-name" required></div>
+                <div class="form-group"><label>Role</label><input type="text" id="m-role"></div>
                 <div class="flex-between" style="gap: 10px;">
                     <button type="button" class="btn btn-outline" style="flex:1" onclick="closeMemberModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="flex:1">Save Profile</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <div id="front-action-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 320px; text-align: center; padding: 25px;">
+            <h2 id="fa-name" style="margin-top: 0; margin-bottom: 5px;">Member Name</h2>
+            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 25px;">Update fronting status</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn btn-primary" onclick="confirmFrontStatus('Primary Fronter')">Set as Primary Fronter</button>
+                <button class="btn btn-outline" onclick="confirmFrontStatus('Co-Fronter')">Set as Co-Fronter</button>
+                
+                <div style="display: flex; gap: 8px; margin-top: 5px;">
+                    <input type="text" id="fa-custom-status" placeholder="Custom role..." style="flex: 2; padding: 10px; font-size: 0.9rem;">
+                    <button class="btn btn-outline" style="flex: 1; padding: 10px;" onclick="confirmFrontStatus('Custom')">Set</button>
+                </div>
+
+                <button class="btn btn-danger" id="fa-remove-btn" onclick="confirmFrontStatus('Remove')" style="display:none; margin-top: 10px;">Remove from Front</button>
+                <button class="btn" style="background: var(--border); color: var(--text-main); margin-top: 5px;" onclick="closeFrontAction()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        /* APP STATE */
+        let activeDataRaw = JSON.parse(localStorage.getItem('nx_active')) || [];
+        let activeDataMigrated = activeDataRaw.map(item => typeof item === 'string' ? { name: item, status: 'Primary Fronter' } : item);
+
         let state = {
             members: JSON.parse(localStorage.getItem('nx_members')) || [],
             history: JSON.parse(localStorage.getItem('nx_history')) || [],
-            activeFronters: JSON.parse(localStorage.getItem('nx_active')) || [],
-            chatMessages: JSON.parse(localStorage.getItem('nx_chat')) || [],
-            currentSpeaker: localStorage.getItem('nx_currentSpeaker') || null,
+            activeFronters: activeDataMigrated,
             theme: localStorage.getItem('nx_theme') || 'dark'
         };
 
         let currentPfpBuffer = "";
+        let currentActionIndex = -1;
 
-        let isViewerMode = false;
+        window.onload = () => { applyTheme(state.theme); renderAll(); if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); };
 
-        /* INITIALIZATION */
-        window.onload = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const dataParam = urlParams.get('data');
-            if (dataParam) {
-                importData(dataParam);
-            }
+        function save() { localStorage.setItem('nx_members', JSON.stringify(state.members)); localStorage.setItem('nx_history', JSON.stringify(state.history)); localStorage.setItem('nx_active', JSON.stringify(state.activeFronters)); localStorage.setItem('nx_theme', state.theme); }
 
-            applyTheme(state.theme);
-            renderAll();
+        function switchTab(tabId, event) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); document.getElementById(tabId).classList.add('active'); if(event) event.currentTarget.classList.add('active'); }
 
-            document.getElementById('viewer-link').value = window.location.origin + window.location.pathname + '?viewer=true&data=' + btoa(JSON.stringify(state));
-
-            isViewerMode = urlParams.has('viewer');
-            if (isViewerMode) {
-                document.body.classList.add('viewer-mode');
-                document.querySelectorAll('.btn:not(.nav-btn)').forEach(btn => btn.style.display = 'none');
-                document.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
-                document.querySelectorAll('button[onclick*="delete"], button[onclick*="openMemberModal"], button[onclick*="clearFront"], button[onclick*="generateKey"], button[onclick*="importData"]').forEach(btn => btn.style.display = 'none');
-                document.getElementById('theme-selector').disabled = true;
-            }
-
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js');
-            }
-        };
-
-        /* CORE FUNCTIONS */
-        function save() {
-            localStorage.setItem('nx_members', JSON.stringify(state.members));
-            localStorage.setItem('nx_history', JSON.stringify(state.history));
-            localStorage.setItem('nx_active', JSON.stringify(state.activeFronters));
-            localStorage.setItem('nx_chat', JSON.stringify(state.chatMessages));
-            localStorage.setItem('nx_currentSpeaker', state.currentSpeaker || '');
-            localStorage.setItem('nx_theme', state.theme);
-        }
-
-        function switchTab(tabId, event) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if(event) event.currentTarget.classList.add('active');
-        }
-
-        function togglePrivacy() {
-            document.getElementById('main-container').classList.toggle('privacy-blur');
-        }
-
-        /* MEMBER MANAGEMENT */
-        document.getElementById('m-pfp').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onloadend = () => { currentPfpBuffer = reader.result; };
-            if (file) reader.readAsDataURL(file);
-        });
-
-        function openMemberModal(index = -1) {
-            const modal = document.getElementById('member-modal');
-            const form = document.getElementById('member-form');
-            modal.style.display = 'flex';
-            
-            if(index > -1) {
-                const m = state.members[index];
-                document.getElementById('modal-title').innerText = "Edit Profile";
-                document.getElementById('edit-index').value = index;
-                document.getElementById('m-name').value = m.name;
-                document.getElementById('m-age').value = m.age;
-                document.getElementById('m-pronouns').value = m.pronouns;
-                document.getElementById('m-role').value = m.role;
-                document.getElementById('m-group').value = m.group;
-                currentPfpBuffer = m.pfp;
-            } else {
-                form.reset();
-                document.getElementById('modal-title').innerText = "New System Member";
-                document.getElementById('edit-index').value = -1;
-                currentPfpBuffer = "";
-            }
-        }
-
-        function closeMemberModal() {
-            document.getElementById('member-modal').style.display = 'none';
-        }
-
-        document.getElementById('member-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const idx = parseInt(document.getElementById('edit-index').value);
-            
-            const memberData = {
-                name: document.getElementById('m-name').value,
-                age: document.getElementById('m-age').value,
-                pronouns: document.getElementById('m-pronouns').value,
-                role: document.getElementById('m-role').value,
-                group: document.getElementById('m-group').value,
-                pfp: currentPfpBuffer
-            };
-
-            if(idx > -1) state.members[idx] = memberData;
-            else state.members.push(memberData);
-
-            save();
-            closeMemberModal();
-            renderAll();
-        });
-
-        function deleteMember(index) {
-            if(confirm("Permanently delete this profile?")) {
-                state.members.splice(index, 1);
-                // Also remove from active fronters if they were there
-                state.activeFronters = state.activeFronters.filter(name => name !== state.members[index]?.name);
-                save();
-                renderAll();
-            }
-        }
-
-        /* FRONTING LOGIC */
-        function toggleFront(index) {
+        function openFrontAction(index) {
+            currentActionIndex = index;
             const member = state.members[index];
-            const activeIdx = state.activeFronters.indexOf(member.name);
+            document.getElementById('fa-name').innerText = member.name;
+            const activeIdx = state.activeFronters.findIndex(f => f.name === member.name);
+            document.getElementById('fa-remove-btn').style.display = activeIdx > -1 ? 'block' : 'none';
+            document.getElementById('front-action-modal').style.display = 'flex';
+        }
 
-            if(activeIdx > -1) {
-                state.activeFronters.splice(activeIdx, 1);
-                addLog(member.name, "Left Front");
+        function closeFrontAction() { document.getElementById('front-action-modal').style.display = 'none'; document.getElementById('fa-custom-status').value = ''; }
+
+        function confirmFrontStatus(actionType) {
+            const member = state.members[currentActionIndex];
+            const activeIdx = state.activeFronters.findIndex(f => f.name === member.name);
+            
+            let finalStatus = actionType;
+            if (actionType === 'Custom') {
+                const customInput = document.getElementById('fa-custom-status').value.trim();
+                if (!customInput) return; // Do nothing if the box is empty
+                finalStatus = customInput;
+            }
+
+            if (finalStatus === 'Remove') {
+                if (activeIdx > -1) { state.activeFronters.splice(activeIdx, 1); addLog(member.name, "Left Front"); }
             } else {
-                state.activeFronters.unshift(member.name);
-                addLog(member.name, "Joined Front");
-            }
-            save();
-            renderAll();
-        }
-
-        function clearFront() {
-            state.activeFronters = [];
-            addLog("System", "Cleared all fronters");
-            save();
-            renderAll();
-        }
-
-        function addLog(name, action) {
-            const entry = {
-                name: name,
-                action: action,
-                time: new Date().toLocaleString()
-            };
-            state.history.unshift(entry);
-            if(state.history.length > 50) state.history.pop(); // Keep log manageable
-        }
-
-        function generateKey() {
-            const key = btoa(JSON.stringify(state));
-            document.getElementById('system-key-box').value = key;
-        }
-
-        function importData(key = null) {
-            if (!key) key = prompt('Paste your System Key:');
-            if (key) {
-                try {
-                    const data = JSON.parse(atob(key));
-                    state = data;
-                    save();
-                    renderAll();
-                } catch (e) {
-                    alert('Invalid key');
-                }
-            }
-        }
-
-        /* RENDERING ENGINES */
-        function renderAll() {
-            renderFronters();
-            renderDirectory();
-            renderQuickSwitch();
-            renderLogs();
-            renderChatView();
-        }
-
-        function updateCurrentSpeaker(name) {
-            state.currentSpeaker = name || null;
-            save();
-            renderChatView();
-        }
-
-        function renderChatView() {
-            const speakerSelect = document.getElementById('chat-speaker-select');
-            const chatWindow = document.getElementById('chat-window');
-            const currentName = document.getElementById('chat-current-name');
-            const currentRole = document.getElementById('chat-current-role');
-            const currentAvatar = document.getElementById('chat-current-avatar');
-            const messageInput = document.getElementById('chat-message-input');
-            const sendButton = document.getElementById('chat-send-button');
-
-            speakerSelect.innerHTML = `<option value="">Select an alter...</option>`;
-            state.members.forEach(member => {
-                const option = document.createElement('option');
-                option.value = member.name;
-                option.textContent = member.name;
-                if (state.currentSpeaker === member.name) option.selected = true;
-                speakerSelect.appendChild(option);
-            });
-
-            const selected = state.members.find(mem => mem.name === state.currentSpeaker);
-            if (selected) {
-                currentName.textContent = selected.name;
-                currentRole.textContent = selected.role ? `${selected.role} • ${selected.pronouns}` : selected.pronouns || 'Alter';
-                currentAvatar.innerHTML = selected.pfp ? `<img src="${selected.pfp}" alt="${selected.name}">` : `<div class="chat-avatar" style="display:flex; align-items:center; justify-content:center;">${selected.name[0]}</div>`;
-                messageInput.disabled = isViewerMode ? true : false;
-                sendButton.disabled = isViewerMode ? true : false;
-            } else {
-                currentName.textContent = 'No speaker selected';
-                currentRole.textContent = 'Choose an alter to start chatting.';
-                currentAvatar.innerHTML = `<div class="chat-avatar" style="display:flex; align-items:center; justify-content:center;">?</div>`;
-                messageInput.disabled = true;
-                sendButton.disabled = true;
+                if (activeIdx > -1) { state.activeFronters[activeIdx].status = finalStatus; addLog(member.name, `Switched to ${finalStatus}`); } 
+                else { state.activeFronters.unshift({ name: member.name, status: finalStatus }); addLog(member.name, `Joined as ${finalStatus}`); }
             }
 
-            chatWindow.innerHTML = '';
-            state.chatMessages.forEach(message => {
-                const bubble = document.createElement('div');
-                bubble.className = 'chat-bubble';
-                bubble.innerHTML = `
-                    <div class="meta">
-                        <strong>${message.sender}</strong>
-                        <span>${new Date(message.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>
-                    <div>${message.text}</div>
-                `;
-                chatWindow.appendChild(bubble);
-            });
-
-            if (state.chatMessages.length === 0) {
-                chatWindow.innerHTML = '<div style="color: #a1a1aa;">No chat messages yet. Select a speaker and send the first message.</div>';
-            }
+            save(); renderAll(); closeFrontAction();
         }
 
-        function sendChatMessage() {
-            const input = document.getElementById('chat-message-input');
-            const text = input.value.trim();
-            if (!text) return;
-            const speaker = state.members.find(mem => mem.name === state.currentSpeaker);
-            if (!speaker) {
-                alert('Please select a speaker before sending a message.');
-                return;
-            }
-            state.chatMessages.push({ sender: speaker.name, text, time: new Date().toISOString() });
-            input.value = '';
-            save();
-            renderChatView();
-        }
+        function clearFront() { state.activeFronters = []; addLog("System", "Cleared all fronters"); save(); renderAll(); }
+        function addLog(name, action) { state.history.unshift({ name, action, time: new Date().toLocaleString() }); if(state.history.length > 50) state.history.pop(); }
+
+        document.getElementById('m-pfp').addEventListener('change', e => { const file = e.target.files[0]; const reader = new FileReader(); reader.onloadend = () => { currentPfpBuffer = reader.result; }; if (file) reader.readAsDataURL(file); });
+        function openMemberModal(index = -1) { document.getElementById('member-modal').style.display = 'flex'; if(index > -1) { const m = state.members[index]; document.getElementById('edit-index').value = index; document.getElementById('m-name').value = m.name; document.getElementById('m-role').value = m.role || ''; currentPfpBuffer = m.pfp || ''; } else { document.getElementById('member-form').reset(); document.getElementById('edit-index').value = -1; currentPfpBuffer = ""; } }
+        function closeMemberModal() { document.getElementById('member-modal').style.display = 'none'; }
+        
+        document.getElementById('member-form').addEventListener('submit', (e) => { e.preventDefault(); const idx = parseInt(document.getElementById('edit-index').value); const memberData = { name: document.getElementById('m-name').value, role: document.getElementById('m-role').value, pfp: currentPfpBuffer }; if(idx > -1) state.members[idx] = memberData; else state.members.push(memberData); save(); closeMemberModal(); renderAll(); });
+        function deleteMember(index) { if(confirm("Delete this profile?")) { const memberName = state.members[index].name; state.members.splice(index, 1); state.activeFronters = state.activeFronters.filter(f => f.name !== memberName); save(); renderAll(); } }
+
+        function renderAll() { renderFronters(); renderDirectory(); renderQuickSwitch(); renderLogs(); }
 
         function renderFronters() {
             const container = document.getElementById('active-fronters-list');
-            container.innerHTML = '';
-
-            if(state.activeFronters.length === 0) {
-                container.innerHTML = `<div style="color:#a1a1aa">No one is currently fronting.</div>`;
-                return;
-            }
-
-            state.activeFronters.forEach(name => {
-                const m = state.members.find(mem => mem.name === name);
-                const div = document.createElement('div');
-                div.className = 'flex-between';
-                div.style = 'gap: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 50px; pr: 20px';
-                
-                const img = m?.pfp ? `<img src="${m.pfp}" class="fronter-avatar" style="width:40px; height:40px;">` : `<div class="fronter-avatar" style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:#7c4dff">${name[0]}</div>`;
-                
-                div.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        ${img}
-                        <div>
-                            <div style="font-weight:bold; font-size:0.9rem;">${name} <span class="badge">${state.activeFronters.indexOf(name) === 0 ? 'Front' : 'Co-Front'}</span></div>
-                            <div style="font-size:0.7rem; color:#a1a1aa">${m?.role || 'Member'}</div>
-                        </div>
-                    </div>
-                `;
+            container.innerHTML = state.activeFronters.length === 0 ? `<div style="color:var(--text-dim)">No one is currently fronting.</div>` : '';
+            state.activeFronters.forEach(fData => {
+                const m = state.members.find(mem => mem.name === fData.name);
+                const isPrimary = fData.status === 'Primary Fronter';
+                const badgeColor = isPrimary ? 'var(--accent)' : 'var(--text-dim)';
+                const div = document.createElement('div'); div.className = 'card flex-between'; div.style.padding = '15px'; div.style.marginBottom = '0';
+                const img = m?.pfp ? `<img src="${m.pfp}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; border: 2px solid ${badgeColor};">` : `<div style="width:50px; height:50px; display:flex; align-items:center; justify-content:center; background:var(--card); border: 2px solid ${badgeColor}; border-radius:50%;">${fData.name[0]}</div>`;
+                div.innerHTML = `<div style="display:flex; align-items:center; gap:15px;">${img}<div><div style="font-weight:bold; font-size:1.1rem;">${fData.name}</div><div style="font-size:0.8rem; color:var(--text-dim); margin-top: 4px;"><span class="badge" style="background: rgba(255,255,255,0.1); color: ${badgeColor}; border: 1px solid ${badgeColor};">${fData.status}</span></div></div></div>`;
                 container.appendChild(div);
             });
         }
 
-        function renderMembers() {
-            renderDirectory();
-        }
-
         function renderDirectory() {
-            const grid = document.getElementById('directory-grid');
-            const search = document.getElementById('search-bar').value.toLowerCase();
-            const filter = document.getElementById('filter-group').value;
-            grid.innerHTML = '';
-
+            const grid = document.getElementById('directory-grid'); grid.innerHTML = '';
             state.members.forEach((m, i) => {
-                if(filter !== 'All' && m.group !== filter) return;
-                if(search && !m.name.toLowerCase().includes(search) && !m.role.toLowerCase().includes(search)) return;
-
-                const card = document.createElement('div');
-                card.className = 'member-card';
+                const card = document.createElement('div'); card.className = 'member-card';
                 const img = m.pfp ? `<img src="${m.pfp}" class="member-pfp">` : `<div class="member-pfp" style="display:flex; align-items:center; justify-content:center; background:#333;">${m.name[0]}</div>`;
-                
-                card.innerHTML = `
-                    <div class="member-banner"></div>
-                    <div class="member-content">
-                        ${img}
-                        <div class="member-meta">
-                            <div class="member-name">${m.name} <span class="badge">${m.age || '?'}</span></div>
-                            <div class="member-sub">${m.role} • ${m.pronouns}</div>
-                            <div style="margin-top:15px; display:flex; gap:5px;">
-                                ${isViewerMode ? '' : '<button class="btn btn-outline" style="flex:1; padding:5px; font-size:0.7rem;" onclick="openMemberModal(' + i + ')">Edit</button>'}
-                                ${isViewerMode ? '' : '<button class="btn btn-danger" style="flex:1; padding:5px; font-size:0.7rem;" onclick="deleteMember(' + i + ')">Delete</button>'}
-                            </div>
-                        </div>
-                    </div>
-                `;
+                card.innerHTML = `<div class="member-banner"></div><div class="member-content">${img}<div class="member-name">${m.name}</div><div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">${m.role || 'System Member'}</div><div style="display:flex; gap:5px;"><button class="btn btn-outline" style="flex:1; padding:5px;" onclick="openMemberModal(${i})">Edit</button><button class="btn btn-danger" style="flex:1; padding:5px;" onclick="deleteMember(${i})">Delete</button></div></div>`;
                 grid.appendChild(card);
             });
         }
 
         function renderQuickSwitch() {
-            const grid = document.getElementById('quick-grid');
-            grid.innerHTML = '';
-
+            const grid = document.getElementById('quick-grid'); grid.innerHTML = '';
             state.members.forEach((m, i) => {
-                const isActive = state.activeFronters.includes(m.name);
-                const card = document.createElement('div');
-                card.className = 'card flex-between';
-                card.style = `padding: 12px; margin-bottom: 0; cursor: ${isViewerMode ? 'default' : 'pointer'}; border-left: 4px solid ${isActive ? '#7c4dff' : 'transparent'}`;
-                if (!isViewerMode) card.onclick = () => toggleFront(i);
-
-                const img = m.pfp ? `<img src="${m.pfp}" style="width:35px; height:35px; border-radius:5px; object-fit:cover;">` : `<div style="width:35px; height:35px; background:#333; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.8rem;">${m.name[0]}</div>`;
-
-                card.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        ${img}
-                        <div>
-                            <div style="font-weight:700; font-size:0.85rem;">${m.name}</div>
-                            <div style="font-size:0.7rem; color:var(--text-dim)">${m.role}</div>
-                        </div>
-                    </div>
-                    <div style="color: ${isActive ? '#7c4dff' : '#a1a1aa'}; font-size: 0.7rem; font-weight: 800;">
-                        ${isActive ? 'ACTIVE' : 'OFFLINE'}
-                    </div>
-                `;
+                const activeData = state.activeFronters.find(f => f.name === m.name);
+                const isActive = !!activeData;
+                const card = document.createElement('div'); card.className = 'card flex-between'; card.style = `padding: 15px; margin-bottom: 0; cursor: pointer; border-left: 4px solid ${isActive ? 'var(--accent)' : 'transparent'};`;
+                card.onclick = () => openFrontAction(i);
+                const img = m.pfp ? `<img src="${m.pfp}" style="width:40px; height:40px; border-radius:8px; object-fit:cover;">` : `<div style="width:40px; height:40px; background:#333; border-radius:8px; display:flex; align-items:center; justify-content:center;">${m.name[0]}</div>`;
+                card.innerHTML = `<div style="display:flex; align-items:center; gap:12px;">${img}<div><div style="font-weight:bold; font-size:0.95rem;">${m.name}</div></div></div><div style="color: ${isActive ? 'var(--accent)' : 'var(--text-dim)'}; font-size: 0.75rem; font-weight: 800; text-align: right;">${isActive ? activeData.status.toUpperCase() : 'OFFLINE'}</div>`;
                 grid.appendChild(card);
             });
         }
 
-        function renderLogs() {
-            const tbody = document.getElementById('history-log-body');
-            tbody.innerHTML = '';
-            state.history.forEach(log => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight:bold">${log.name}</td>
-                    <td><span class="badge" style="background:${log.action.includes('Joined') ? 'var(--success)' : 'var(--danger)'}; color:#000">${log.action}</span></td>
-                    <td style="color:var(--text-dim)">${log.time}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function clearLogs() {
-            if(confirm("Clear all history?")) {
-                state.history = [];
-                save();
-                renderLogs();
-            }
-        }
-
-        /* THEMING */
-        function changeTheme(themeName) {
-            state.theme = themeName;
-            applyTheme(themeName);
-            save();
-        }
-
-        function applyTheme(themeName) {
-            document.body.setAttribute('data-theme', themeName);
-            document.getElementById('theme-selector').value = themeName;
-        }
-
-        /* DATA PORTABILITY */
-        function generateKey() {
-            const key = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
-            document.getElementById('system-key-box').value = key;
-            alert("System Key Generated! This contains all your profiles and settings.");
-        }
-
-        function importData() {
-            const key = prompt("Paste your System Key here:");
-            if(!key) return;
-            try {
-                const decoded = JSON.parse(decodeURIComponent(escape(atob(key))));
-                if(confirm("This will overwrite all current data. Continue?")) {
-                    state = decoded;
-                    save();
-                    location.reload();
-                }
-            } catch(e) {
-                alert("Error: Invalid System Key.");
-            }
-        }
+        function renderLogs() { const tbody = document.getElementById('history-log-body'); tbody.innerHTML = ''; state.history.forEach(log => { tbody.innerHTML += `<tr><td style="font-weight:bold">${log.name}</td><td>${log.action}</td><td style="color:var(--text-dim)">${log.time}</td></tr>`; }); }
+        function clearLogs() { if(confirm("Clear history?")) { state.history = []; save(); renderLogs(); } }
+        function changeTheme(t) { state.theme = t; applyTheme(t); save(); }
+        function applyTheme(t) { document.body.setAttribute('data-theme', t); document.getElementById('theme-selector').value = t; }
+        function generateKey() { document.getElementById('system-key-box').value = btoa(unescape(encodeURIComponent(JSON.stringify(state)))); }
+        function importData() { try { const data = JSON.parse(decodeURIComponent(escape(atob(prompt("Paste Key:"))))); if(confirm("Overwrite data?")) { state = data; save(); location.reload(); } } catch { alert("Invalid Key"); } }
     </script>
 </body>
 </html>
